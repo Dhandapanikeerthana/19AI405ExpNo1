@@ -44,70 +44,66 @@
 ## Program:
 ```
 import random
+import time
 
-class VacuumCleanerAgent:
-    def __init__(self):  # Initialize the agent's state (location and dirt status)
-        self.location = "A"  # Initial location (can be "A" or "B")
-        self.dirt_status = {
-            "A": True,
-            "B": True,
-        }  # Initial dirt status (False means no dirt)
-        self.performance = 0
+class HealthMonitoringAgent:
+    def __init__(self, patient_data, sensors, actuators):
+        self.patient_data = patient_data
+        self.sensors = sensors
+        self.actuators = actuators
+        print(f"Monitoring health for patient: {self.patient_data['name']}")
+    def monitor_health(self):
 
-    def move_left(self):  # Move the agent to the left if possible
-        if self.location == "B":
-            self.location = "A"
 
-    def move_right(self):  # Move the agent to the right if possible
-        if self.location == "A":
-            self.location = "B"
+        while True:
+            current_health_state = self.sensors.get_health_state()
+            action = self.choose_action(current_health_state)
 
-    def suck_dirt(self):  # Suck dirt in the current location if there is dirt
-        if self.dirt_status[self.location]:
-            self.dirt_status[self.location] = False
-            print(f"Sucked dirt in location {self.location}")
+            print("Current Health State:", current_health_state)
+            self.actuators.perform_action(action)
 
-    def do_nothing(self):  # Do nothing
-        pass
+            if action == "No specific action needed":
+                print("Patient is stable. Monitoring stopped.")
+                break
 
-    def perform_action(self, action):  # Perform the specified action
-        if action == "left":
-            self.performance = self.performance - 1
-            self.move_left()
-        elif action == "right":
-            self.performance = self.performance - 1
-            self.move_right()
-        elif action == "suck":
-            self.performance = self.performance + 10
-            self.suck_dirt()
-        elif action == "nothing":
-            self.do_nothing()
+            time.sleep(1)  # wait for 1 second before next reading
+
+    def choose_action(self, current_health_state):
+        if current_health_state['heart_rate'] > 120:
+            return "Alert healthcare provider: High heart rate detected"
+        elif current_health_state['blood_pressure'] > 140:
+            return "Alert healthcare provider: High blood pressure detected"
+        elif current_health_state['temperature'] > 38:
+            return "Recommend rest and monitor temperature"
         else:
-            print("Invalid action")
+            return "No specific action needed"
 
-    def print_status(self):  # Print the current status of the agent
-        print(f"Location: {self.location}, Dirt Status: {self.dirt_status}, ", end="")
-        print(f"Perfomance Measure: {self.performance}")
+class HealthSensors:
+    def get_health_state(self):
+        return {
+            'heart_rate': random.randint(60, 150),
+            'blood_pressure': random.randint(90, 160),
+            'temperature': round(random.uniform(36.0, 38.5), 1)
+        }
 
+class HealthActuators:
+    def perform_action(self, action):
+        print("Action:", action)
 
-# Example usage:
-agent = VacuumCleanerAgent()
-# Move the agent, suck dirt, and do nothing
-agent.perform_action("left")
-agent.print_status()
-agent.perform_action("suck")
-agent.print_status()
-agent.perform_action("right")
-agent.print_status()
-agent.perform_action("suck")
-agent.print_status()
-agent.perform_action("nothing")
-agent.print_status()
+if __name__ == "__main__":
+    patient_data = {'patient_id': 123, 'name': 'John Doe', 'age': 35}
+
+    sensors = HealthSensors()
+    actuators = HealthActuators()
+
+    agent = HealthMonitoringAgent(patient_data, sensors, actuators)
+    agent.monitor_health()
 
 ```
 ## Output:
 
-<img width="936" height="177" alt="image" src="https://github.com/user-attachments/assets/aacf027b-d4b0-4e80-a3f6-5bbde77064ac" />
+<img width="927" height="439" alt="image" src="https://github.com/user-attachments/assets/88636b37-06e7-4375-81fa-4ced382b569b" />
+
 
 ## Result :
 
